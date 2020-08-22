@@ -1,0 +1,129 @@
+// heeeyyyy Mooortyyyyyy!!
+#include <bits/stdc++.h>
+#include <chrono>
+#include <random>
+using namespace std;
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
+#pragma GCC optimization("unroll-loops")
+
+#define rep(i,n) for(ll i = 0; i < n; ++i)
+#define ed end()  
+#define bg begin()
+# define ld long double
+#define ll long long
+#define ub(v,a) upper_bound(all(v),a)
+#define lb(v,a) lower_bound(all(v),a)
+#define sz(a) (int)(a.size())
+#define pb push_back
+#define mp make_pair
+#define all(v) v.begin(),v.end()
+#define tr(v,it) for(auto it=v.begin();it!=v.end();it++)
+#define present(v,x) (v.find(x)!=v.end()) //set/map etc.
+#define vpresent(v,x) (find(all(v),x)!=v.end()) // vector
+#define vi vector <int>
+#define vs vector <string>
+#define vc vector <char>
+typedef vector< long long > vll;
+typedef vector<pair<ll,ll>> vp;
+typedef vector< vll > vvll;
+typedef pair< int,int > pi;
+const long long max_sz = 1e5 + 1;
+const long long mod = 1e9 + 7;
+const long long MAXN = 4e18 + 1;
+const int N=500023;
+#define PI 3.1415926535897932384626
+char flip(char k){ if(k=='0') return '1'; return '0'; }
+ll sum_digit(ll n){ ll a=0,i; for(i=n;i>0;i=i/10){ a+=(i%10);} return a; }
+ll gcd(ll a, ll b){if(b == 0) return a;return gcd(b, a%b);}
+bool isPowerOfTwo(int n){if(n==0)return false;return (ceil(log2(n)) == floor(log2(n)));}
+//DEBUGGING
+#define deb(x) cout << #x << "=" << x << endl
+#define deb2(x, y) cout << #x << "=" << x << "," << #y << "=" << y << endl
+
+
+ll expo(ll a, ll b, ll m); // a^(b) %m
+
+//=======================
+
+const int LG = 20;
+vll g[N];
+ll lvl[N], p[N][LG];
+void ipgraph(ll m){ll  u, v;while(m--){cin>>u>>v; u--, v--;g[u].pb(v);g[v].pb(u);}}
+
+// p[i][j] is the node we would get if we go 2^j up from i ... i.e p[i][0] is the parent of the i th node
+
+void dfs(ll u,ll par){
+    lvl[u]=lvl[par]+1;// level would be used in the lca application
+    p[u][0]=par;
+    for(auto v:g[u]){
+        if(v==par)continue;
+        dfs(v,u);
+    }
+}
+
+ll lca(ll u,ll v){// lowest commmon ancestor
+        if(lvl[u]<lvl[v])swap(u,v);// u is deeper assumed
+        ll i,lg;
+        for(lg=0;(1<<lg)<=lvl[u];lg++);
+        lg--;// lg mtlb u ke kitne uppar tak parent hai 
+        
+        for(i=lg;i>=0;i--){
+            if(lvl[u]-(1<<i)>=lvl[v]){
+                u=p[u][i];// taking u node up to node v or close
+            }
+        }
+        
+        if(u==v)return v;
+        else{// now v and u are at he same level but they are not ancestral so on different subtrees
+            for(i=lg;i>=0;i--){
+                if(p[u][i]!=-1 && p[u][i]!=p[v][i]){
+                    u=p[u][i];v=p[v][i];
+                }
+            }
+        }
+        return p[u][0];
+}
+
+void solve(){
+    ll i, j,n, m,k,x,y;
+    cin>>n;
+   // g.assign(n,{});
+    
+    ipgraph(n-1);
+    //p.assign(n,{});
+    rep(i,n)rep(j,LG)p[i][j]=-1;
+    
+    dfs(0,-1);
+    
+    for(ll i=1;i<LG;i++){// looping for the  (i.e 2^i up) and we have already(during dfs) added the par to the p matrix parent of all the nodes taking one at a time
+        for(ll j=0;j<n;j++){// addition takes place in nlogn time
+            if(p[j][i-1]!=-1){
+                p[j][i]=p[p[j][i-1]][i-1];
+            }
+        }
+    }
+    
+    cout<<lca(3,10)+1;
+    
+}
+
+int main(){
+ 
+   ll t = 1;
+   // cin >> t;
+    while(t--) {
+      solve();
+    }
+   return 0;
+}
+
+
+ll expo(ll a, ll b, ll m) 
+{ 
+    if (b == 0)return 1; 
+    ll p = expo(a, b / 2, m) % m; 
+    p = (p * p) % m; 
+  
+    return (b % 2 == 0) ? p : (a * p) % m; 
+} 
