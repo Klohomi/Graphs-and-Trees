@@ -104,7 +104,7 @@ void solve(){
         }
     }
     
-    cout<<lca(3,10)+1;
+    cout<<lca(x,y)+1;// lca of x and y
     
 }
 
