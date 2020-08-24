@@ -6,20 +6,20 @@ vector<pair<ll,ll>>g[N];// firsr elemtn in the pair is the node and the second i
 void 01bfs(ll s){// s is the source from which we need to find the distance
       vll d(V,INF);// V is the number pof verticed(nodes)
       d[s]=0;
-      deque <ll>d;// distance from the source node
-      d.push_front(s);//visited and distance is improving if we push something in the deque
+      deque <ll>dq;// distance from the source node
+      dq.push_front(s);//visited and distance is improving if we push something in the deque
       
-      while(!d.empty()){
-            ll u=d.front();
-            d.pop_front();
+      while(!dq.empty()){
+            ll u=dq.front();
+            dq.pop_front();
             
             for(auto edge:g[u]){
                   ll v=edge.first;
                   ll w=edge.second;
                   if(d[u]+w<d[v]){
                         d[v]=d[u]+w;        // virtually forming a new link between the source node and v
-                        if(w)d.push_back(v);                          
-                        else d.push_front(v);                 //pushing the nodes at the same level at front and those at different at back 
+                        if(w)dq.push_back(v);                          
+                        else dq.push_front(v);                 //pushing the nodes at the same level at front and those at different at back 
                   }
             }      
           
